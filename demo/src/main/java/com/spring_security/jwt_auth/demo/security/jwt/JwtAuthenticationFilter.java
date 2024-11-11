@@ -1,5 +1,6 @@
 package com.spring_security.jwt_auth.demo.security.jwt;
 
+import com.spring_security.jwt_auth.demo.security.token.TokenRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final UserDetailsService userDetailsService;
   private final JwtService jwtService;
+  private final TokenRepository tokenRepository;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -33,7 +35,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-        if(jwtService.isTokenValid(token, userDetails)){
+        boolean isTokenValid = tokenRepository.findByAccessToken(token)
+                .map(t-> !t.isExpired() && !t.isRevoked() ).orElse(false);
+
+        if(jwtService.isTokenValid(token, userDetails) && isTokenValid){
           UsernamePasswordAuthenticationToken
               authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
           authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

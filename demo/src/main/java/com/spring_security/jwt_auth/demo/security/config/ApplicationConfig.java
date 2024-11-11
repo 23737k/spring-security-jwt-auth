@@ -1,6 +1,8 @@
 package com.spring_security.jwt_auth.demo.security.config;
 
 import com.spring_security.jwt_auth.demo.repository.UserRepository;
+import com.spring_security.jwt_auth.demo.security.token.Token;
+import com.spring_security.jwt_auth.demo.security.token.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 @Configuration
 @RequiredArgsConstructor
@@ -32,5 +35,23 @@ public class ApplicationConfig {
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
+  }
+
+
+  @Bean
+  public LogoutHandler logoutHandler(TokenRepository tokenRepository) {
+    return (request, response, authentication) -> {
+      final String header = request.getHeader("Authorization");
+      if (header != null && header.startsWith("Bearer ")) {
+        final String token = header.substring(7);
+
+          Token storedToken = tokenRepository.findByAccessToken(token).orElse(null);
+          if(storedToken != null){
+            storedToken.setExpired(true);
+            storedToken.setRevoked(true);
+            tokenRepository.save(storedToken);
+        }
+      }
+    };
   }
 }
