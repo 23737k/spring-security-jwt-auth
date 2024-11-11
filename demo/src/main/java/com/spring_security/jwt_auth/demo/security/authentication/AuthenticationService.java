@@ -38,12 +38,14 @@ public class AuthenticationService {
     tokenRepository.findByUser(user).forEach(t -> {
       t.setExpired(true);
       t.setRevoked(true);
+      tokenRepository.save(t);
     });
 
-      return Token.builder()
+      Token token =  Token.builder()
             .accessToken(jwtService.generateToken(user))
             .user(user)
             .build();
+      return tokenRepository.save(token);
   }
 
   public AuthRes register(RegisterReq registerReq) {
