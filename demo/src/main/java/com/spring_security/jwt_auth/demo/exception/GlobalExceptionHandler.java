@@ -37,5 +37,12 @@ public class GlobalExceptionHandler {
     return ResponseEntity.badRequest().body(errorMessages);
   }
 
+  @ExceptionHandler(DuplicateEmailException.class)
+  public ResponseEntity<?> handleException(DuplicateEmailException e){
+    return ResponseEntity.badRequest().body(e.getMessage());
+  }
+
+
+
 
 }
