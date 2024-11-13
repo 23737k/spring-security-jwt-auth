@@ -4,7 +4,7 @@ import com.spring_security.jwt_auth.demo.security.authentication.AuthenticationS
 import com.spring_security.jwt_auth.demo.security.dto.request.AuthReq;
 import com.spring_security.jwt_auth.demo.security.dto.request.RegisterReq;
 import com.spring_security.jwt_auth.demo.security.dto.response.AuthRes;
-import com.spring_security.jwt_auth.demo.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +26,11 @@ public class AuthController {
   @PostMapping("/register")
   public AuthRes register(@RequestBody @Valid RegisterReq registerReq) {
     return authenticationService.register(registerReq);
+  }
+
+  @PostMapping("/renew-token")
+  public AuthRes renewToken(HttpServletRequest request) {
+    return authenticationService.renewToken(request);
   }
 
 }

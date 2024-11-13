@@ -5,6 +5,7 @@ import com.spring_security.jwt_auth.demo.model.User;
 import com.spring_security.jwt_auth.demo.repository.UserRepository;
 import com.spring_security.jwt_auth.demo.security.dto.request.RegisterReq;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,5 +25,9 @@ public class UserService {
         .password(passwordEncoder.encode(registerReq.getPassword()))
         .build();
     return userRepository.save(user);
+  }
+
+  public User findUserByEmail(String email) {
+    return userRepository.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException("Usuario con email: " + email + " no existe"));
   }
 }

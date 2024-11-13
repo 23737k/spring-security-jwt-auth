@@ -3,38 +3,37 @@ package com.spring_security.jwt_auth.demo.security.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
+import javax.crypto.SecretKey;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
 
 @Service
 public class JwtService {
-  private final String secretKey;
-  @Value("${security.jwt.expiration}")
-  private long expiration;
+  @Value("${security.jwt.secret}")
+  private String secretKey;
+  @Value("${security.jwt.access-token.expiration}")
+  private long accessTokenExpiration;
+  @Value("${security.jwt.refresh-token.expiration}")
+  private long refreshTokenExpiration;
 
-  public JwtService() {
-    try {
-      KeyGenerator generator = KeyGenerator.getInstance("HmacSHA256");
-      SecretKey sk = generator.generateKey();
-      this.secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
-    }
-    catch (NoSuchAlgorithmException e) {
-      throw new RuntimeException(e);
-    }
+
+  public String generateAccessToken(UserDetails userDetails) {
+    return buildToken(userDetails, accessTokenExpiration);
   }
 
+  public String generateRefreshToken(UserDetails userDetails) {
+    return buildToken(userDetails, refreshTokenExpiration);
+  }
 
-  public String generateToken(UserDetails userDetails) {
+  public String buildToken(UserDetails userDetails, long expiration) {
     Map<String, Object> claims = new HashMap<>();
     return Jwts.builder()
         .claims(claims)

@@ -17,6 +17,7 @@ public class Token {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String accessToken;
+    private String refreshToken;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
