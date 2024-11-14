@@ -10,10 +10,10 @@ import lombok.Data;
 public class AuthReq {
 
   @Schema(example = "user@example.com")
-  @NotBlank(message = "El email no debe estar vacio")
+  @NotBlank(message = "The email must not be empty")
   private String email;
 
   @Schema(example = "P@ssw0rd!")
-  @NotBlank(message = "La contraseña no debe estar vacía")
+  @NotBlank(message = "The password must not be empty")
   private String password;
 }

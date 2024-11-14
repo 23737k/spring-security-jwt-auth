@@ -53,7 +53,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(AuthenticationException.class)
   public ResponseEntity<?> handleException(AuthenticationException e){
-    return new ResponseEntity<>( "Credenciales inválidas" ,HttpStatus.UNAUTHORIZED);
+    return new ResponseEntity<>( "Invalid credentials" ,HttpStatus.UNAUTHORIZED);
   }
 
   @ExceptionHandler(InvalidRefreshTokenException.class)
@@ -61,4 +61,13 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
   }
 
+  @ExceptionHandler(OldPasswordMismatchException.class)
+  public ResponseEntity<?> handleException(OldPasswordMismatchException e){
+    return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(NewPasswordMismatchException.class)
+  public ResponseEntity<?> handleException(NewPasswordMismatchException e){
+    return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+  }
 }

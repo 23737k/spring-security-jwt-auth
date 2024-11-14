@@ -2,6 +2,7 @@ package com.spring_security.jwt_auth.demo.controller;
 
 import com.spring_security.jwt_auth.demo.security.authentication.AuthenticationService;
 import com.spring_security.jwt_auth.demo.security.dto.request.AuthReq;
+import com.spring_security.jwt_auth.demo.security.dto.request.ChangePasswordReq;
 import com.spring_security.jwt_auth.demo.security.dto.request.RegisterReq;
 import com.spring_security.jwt_auth.demo.security.dto.response.AuthRes;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -74,7 +76,13 @@ public class AuthController {
   @PostMapping("/logout")
   public void logout() {
     // Este método no se ejecutará ya que Spring Security maneja el logout
-    // Pero es necesario para la documentación
+  }
+
+  @SecurityRequirement(name = "bearerAuth")
+  @Operation(summary = "Change user's password", description = "In order to change a user password, a valid access token must included in the Authorization header. Also, a request body is needed, including the current and the new password ")
+  @PostMapping("/change-password")
+  public String changePassword(@RequestBody @Valid ChangePasswordReq changePasswordReq, Principal principal){
+    return authenticationService.changePassword(principal, changePasswordReq);
   }
 
 }

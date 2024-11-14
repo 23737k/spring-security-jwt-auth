@@ -1,8 +1,11 @@
 package com.spring_security.jwt_auth.demo.security.authentication;
 
 import com.spring_security.jwt_auth.demo.exception.InvalidRefreshTokenException;
+import com.spring_security.jwt_auth.demo.exception.NewPasswordMismatchException;
+import com.spring_security.jwt_auth.demo.exception.OldPasswordMismatchException;
 import com.spring_security.jwt_auth.demo.model.User;
 import com.spring_security.jwt_auth.demo.security.dto.request.AuthReq;
+import com.spring_security.jwt_auth.demo.security.dto.request.ChangePasswordReq;
 import com.spring_security.jwt_auth.demo.security.dto.request.RegisterReq;
 import com.spring_security.jwt_auth.demo.security.dto.response.AuthRes;
 import com.spring_security.jwt_auth.demo.security.jwt.JwtService;
@@ -10,10 +13,14 @@ import com.spring_security.jwt_auth.demo.security.token.Token;
 import com.spring_security.jwt_auth.demo.security.token.TokenRepository;
 import com.spring_security.jwt_auth.demo.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -76,10 +83,15 @@ public class AuthenticationService {
         return new AuthRes(token.getAccessToken(),token.getRefreshToken());
       }
       else
-        throw new InvalidRefreshTokenException("El refresh token no es valido o ya ha sido utilizado");
+        throw new InvalidRefreshTokenException("The refresh token is not valid or it has already been used");
     }
     else
-      throw new InvalidRefreshTokenException("El refresh token no es valido o ya ha sido utilizado");
+      throw new InvalidRefreshTokenException("The refresh token is not valid or it has already been used");
   }
 
+  public String changePassword(Principal principal, ChangePasswordReq changePasswordReq) {
+    User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+    userService.changePassword(user, changePasswordReq);
+    return "Password changed";
+  }
 }

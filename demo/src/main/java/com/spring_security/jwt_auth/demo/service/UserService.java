@@ -1,8 +1,11 @@
 package com.spring_security.jwt_auth.demo.service;
 
 import com.spring_security.jwt_auth.demo.exception.DuplicateEmailException;
+import com.spring_security.jwt_auth.demo.exception.NewPasswordMismatchException;
+import com.spring_security.jwt_auth.demo.exception.OldPasswordMismatchException;
 import com.spring_security.jwt_auth.demo.model.User;
 import com.spring_security.jwt_auth.demo.repository.UserRepository;
+import com.spring_security.jwt_auth.demo.security.dto.request.ChangePasswordReq;
 import com.spring_security.jwt_auth.demo.security.dto.request.RegisterReq;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,7 +21,7 @@ public class UserService {
   public User createUser(RegisterReq registerReq) {
 
     if(userRepository.existsByEmail(registerReq.getEmail()))
-      throw new DuplicateEmailException("El email ya se encuentra registrado");
+      throw new DuplicateEmailException("The email address already exists");
 
     User user = User.builder()
         .email(registerReq.getEmail())
@@ -28,6 +31,28 @@ public class UserService {
   }
 
   public User findUserByEmail(String email) {
-    return userRepository.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException("Usuario con email: " + email + " no existe"));
+    return userRepository.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException("User with email: " + email + " does not exist"));
+  }
+
+
+  public void changePassword(User user, ChangePasswordReq changePasswordReq) {
+    String oldPassword = changePasswordReq.getCurrentPassword();
+    String newPassword = changePasswordReq.getNewPassword();
+    String confirmPassword = changePasswordReq.getConfirmPassword();
+
+
+    if(!newPassword.equals(confirmPassword)){
+      throw new NewPasswordMismatchException("New password does not match confirm password");
+    }
+
+    newPassword = passwordEncoder.encode(newPassword);
+
+    if(!passwordEncoder.matches(oldPassword, user.getPassword())){
+      throw new OldPasswordMismatchException("Current password is incorrect");
+    }
+
+    // Actualizar la contraseña
+    user.setPassword(newPassword);
+    userRepository.save(user);
   }
 }
