@@ -61,4 +61,13 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
   }
 
+  @ExceptionHandler(OldPasswordMismatchException.class)
+  public ResponseEntity<?> handleException(OldPasswordMismatchException e){
+    return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(NewPasswordMismatchException.class)
+  public ResponseEntity<?> handleException(NewPasswordMismatchException e){
+    return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+  }
 }
