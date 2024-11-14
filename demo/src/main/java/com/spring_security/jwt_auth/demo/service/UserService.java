@@ -36,7 +36,7 @@ public class UserService {
 
 
   public void changePassword(User user, ChangePasswordReq changePasswordReq) {
-    String oldPassword = changePasswordReq.getOldPassword();
+    String oldPassword = changePasswordReq.getCurrentPassword();
     String newPassword = changePasswordReq.getNewPassword();
     String confirmPassword = changePasswordReq.getConfirmPassword();
 
