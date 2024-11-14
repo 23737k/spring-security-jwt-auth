@@ -23,7 +23,18 @@ public class SecurityConfig {
           "/api/auth/login",
           "/api/auth/register",
           "/api/auth/renew-token",
+          "/v2/api-docs",
+          "/v3/api-docs",
+          "/v3/api-docs/**",
+          "/swagger-resources",
+          "/swagger-resources/**",
+          "/configuration/ui",
+          "/configuration/security",
+          "/swagger-ui/**",
+          "/webjars/**",
+          "/swagger-ui.html"
       };
+
 
   private final AuthenticationProvider authenticationProvider;
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
