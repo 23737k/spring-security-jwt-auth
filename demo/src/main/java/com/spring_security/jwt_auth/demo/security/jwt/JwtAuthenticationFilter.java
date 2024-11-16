@@ -1,10 +1,11 @@
 package com.spring_security.jwt_auth.demo.security.jwt;
 
-import com.spring_security.jwt_auth.demo.security.token.TokenRepository;
+import static com.spring_security.jwt_auth.demo.security.token.TokenPurpose.ACCESS_TOKEN;
+
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,19 +16,15 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final UserDetailsService userDetailsService;
   private final JwtService jwtService;
-  private final TokenRepository tokenRepository;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                   FilterChain filterChain) throws IOException {
-
 
     try {
       final String header = request.getHeader("Authorization");
@@ -39,10 +36,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
           UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-          boolean isTokenValid = tokenRepository.findByAccessToken(token)
-                  .map(t-> !t.isExpired() && !t.isRevoked() ).orElse(false);
+          boolean isAccessToken = jwtService.extractClaim(token, c -> c.get("purpose")).equals(ACCESS_TOKEN.name());
 
-          if(jwtService.isTokenValid(token, userDetails) && isTokenValid){
+          if(jwtService.isTokenValid(token, userDetails) && isAccessToken){
             UsernamePasswordAuthenticationToken
                 authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

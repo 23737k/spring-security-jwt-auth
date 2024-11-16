@@ -1,7 +1,12 @@
 package com.spring_security.jwt_auth.demo.security.token;
 
 import com.spring_security.jwt_auth.demo.model.User;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,15 +17,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class Token {
+public class RefreshToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String accessToken;
-    private String refreshToken;
+    private String token;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-    private boolean isRevoked = false;
-    private boolean isExpired = false;
 }
