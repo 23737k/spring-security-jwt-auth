@@ -55,4 +55,10 @@ public class UserService {
     user.setPassword(newPassword);
     userRepository.save(user);
   }
+
+  public void enableUser(String email) {
+    User user = findUserByEmail(email);
+    user.setEnabled(true);
+    userRepository.save(user);
+  }
 }

@@ -69,4 +69,15 @@ public class GlobalExceptionHandler {
   public ResponseEntity<?> handleException(NewPasswordMismatchException e){
     return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
   }
+
+  @ExceptionHandler(EmailSendException.class)
+  public ResponseEntity<?>  handleException(EmailSendException e){
+    return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @ExceptionHandler(AccountNotVerifiedException.class)
+  public ResponseEntity<?>  handleException(AccountNotVerifiedException e){
+    return new ResponseEntity<>(e.getMessage(),HttpStatus.FORBIDDEN);
+  }
+
 }

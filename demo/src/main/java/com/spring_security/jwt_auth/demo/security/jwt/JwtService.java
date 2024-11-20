@@ -1,6 +1,7 @@
 package com.spring_security.jwt_auth.demo.security.jwt;
 
 import static com.spring_security.jwt_auth.demo.security.token.TokenPurpose.ACCESS_TOKEN;
+import static com.spring_security.jwt_auth.demo.security.token.TokenPurpose.ACCOUNT_VALIDATION;
 import static com.spring_security.jwt_auth.demo.security.token.TokenPurpose.REFRESH_TOKEN;
 
 import io.jsonwebtoken.Claims;
@@ -37,6 +38,12 @@ public class JwtService {
     Map<String, Object> claims = new HashMap<>();
     claims.put("purpose", REFRESH_TOKEN);
     return buildToken(userDetails, refreshTokenExpiration, claims);
+  }
+
+  public String generateVerificationToken(UserDetails userDetails) {
+    Map<String, Object> claims = new HashMap<>();
+    claims.put("purpose", ACCOUNT_VALIDATION);
+    return buildToken(userDetails, accessTokenExpiration, claims);
   }
 
   public String buildToken(UserDetails userDetails, long expiration, Map<String, Object> claims) {

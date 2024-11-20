@@ -28,3 +28,6 @@ security:
       expiration: 604800000 #una semana
     secret: ${AUTH_SECRET:cGxhbnRyaWJlbGlrZWx5cGlua2VsZXBoYW50YmVoYWxmd2F5c3BhY2V0ZWxldmlzaW8=} #NO USAR EN PRODUCCION
 
+backend:
+  baseUrl: ${BACKEND_BASE_URL:http://localhost:8080}
+

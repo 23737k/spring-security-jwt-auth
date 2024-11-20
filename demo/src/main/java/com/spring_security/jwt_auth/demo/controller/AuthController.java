@@ -15,9 +15,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -47,7 +49,7 @@ public class AuthController {
 
   @Operation(summary = "User register", description = "Register a user and returns an access token and a refresh token.\n\nThe access token should be included in the Authorization header for subsequent requests to access protected resources.\n\nThe refresh token is used to request a new access token when this expires.")
   @PostMapping("/register")
-  public AuthRes register(@RequestBody @Valid RegisterReq registerReq) {
+  public String register(@RequestBody @Valid RegisterReq registerReq) {
     return authenticationService.register(registerReq);
   }
 
@@ -84,5 +86,12 @@ public class AuthController {
   public String changePassword(@RequestBody @Valid ChangePasswordReq changePasswordReq, Principal principal){
     return authenticationService.changePassword(principal, changePasswordReq);
   }
+
+
+  @GetMapping("/verify-account")
+  public String verifyAccount(@RequestParam String token){
+    return authenticationService.verifyAccount(token);
+  }
+
 
 }
