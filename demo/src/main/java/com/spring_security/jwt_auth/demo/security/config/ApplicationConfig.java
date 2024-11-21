@@ -2,7 +2,7 @@ package com.spring_security.jwt_auth.demo.security.config;
 
 import com.spring_security.jwt_auth.demo.repository.UserRepository;
 import com.spring_security.jwt_auth.demo.security.jwt.JwtService;
-import com.spring_security.jwt_auth.demo.security.token.RefreshTokenRepository;
+import com.spring_security.jwt_auth.demo.security.token.ActiveTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
-import org.springframework.transaction.annotation.Transactional;
 
 @Configuration
 @RequiredArgsConstructor
@@ -40,7 +39,7 @@ public class ApplicationConfig {
 
 
   @Bean
-  public LogoutHandler logoutHandler(RefreshTokenRepository tokenRepository, JwtService jwtService) {
+  public LogoutHandler logoutHandler(ActiveTokenRepository tokenRepository, JwtService jwtService) {
     return (request, response, authentication) -> {
       final String header = request.getHeader("Authorization");
       if (header != null && header.startsWith("Bearer ")) {

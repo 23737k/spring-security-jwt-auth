@@ -26,6 +26,8 @@ security:
       expiration: 3600000 #una hora
     refresh-token:
       expiration: 604800000 #una semana
+    account-validation:
+      expiration: 300000 # 5 minutos
     secret: ${AUTH_SECRET:cGxhbnRyaWJlbGlrZWx5cGlua2VsZXBoYW50YmVoYWxmd2F5c3BhY2V0ZWxldmlzaW8=} #NO USAR EN PRODUCCION
 
 backend:

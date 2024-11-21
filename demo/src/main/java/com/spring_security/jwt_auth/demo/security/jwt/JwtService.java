@@ -26,6 +26,8 @@ public class JwtService {
   private long accessTokenExpiration;
   @Value("${security.jwt.refresh-token.expiration}")
   private long refreshTokenExpiration;
+  @Value("${security.jwt.account-validation.expiration}")
+  private long accountValidationExpiration;
 
 
   public String generateAccessToken(UserDetails userDetails) {
@@ -43,7 +45,7 @@ public class JwtService {
   public String generateVerificationToken(UserDetails userDetails) {
     Map<String, Object> claims = new HashMap<>();
     claims.put("purpose", ACCOUNT_VALIDATION);
-    return buildToken(userDetails, accessTokenExpiration, claims);
+    return buildToken(userDetails, accountValidationExpiration, claims);
   }
 
   public String buildToken(UserDetails userDetails, long expiration, Map<String, Object> claims) {

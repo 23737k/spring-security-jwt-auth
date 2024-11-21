@@ -1,6 +1,5 @@
 package com.spring_security.jwt_auth.demo.security.authentication;
 
-import com.spring_security.jwt_auth.demo.exception.AccountNotVerifiedException;
 import com.spring_security.jwt_auth.demo.exception.InvalidRefreshTokenException;
 import com.spring_security.jwt_auth.demo.model.User;
 import com.spring_security.jwt_auth.demo.security.dto.request.AuthReq;
@@ -8,14 +7,13 @@ import com.spring_security.jwt_auth.demo.security.dto.request.ChangePasswordReq;
 import com.spring_security.jwt_auth.demo.security.dto.request.RegisterReq;
 import com.spring_security.jwt_auth.demo.security.dto.response.AuthRes;
 import com.spring_security.jwt_auth.demo.security.jwt.JwtService;
-import com.spring_security.jwt_auth.demo.security.token.RefreshToken;
-import com.spring_security.jwt_auth.demo.security.token.RefreshTokenRepository;
+import com.spring_security.jwt_auth.demo.security.token.ActiveToken;
+import com.spring_security.jwt_auth.demo.security.token.ActiveTokenRepository;
 import com.spring_security.jwt_auth.demo.service.EmailService;
 import com.spring_security.jwt_auth.demo.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,7 +26,7 @@ public class AuthenticationService {
   private final JwtService jwtService;
   private final AuthenticationProvider authenticationProvider;
   private final UserService userService;
-  private final RefreshTokenRepository tokenRepository;
+  private final ActiveTokenRepository tokenRepository;
   private final EmailService emailService;
 
   @Transactional
@@ -37,9 +35,6 @@ public class AuthenticationService {
     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(authReq.getEmail(), authReq.getPassword());
     Authentication auth = authenticationProvider.authenticate(authentication);
     User user = (User) auth.getPrincipal();
-    if(!user.isEnabled())
-      throw new AccountNotVerifiedException("Account not verified");
-
     tokenRepository.deleteByUser(user);
     return getAuthRes(user);
   }
@@ -84,7 +79,7 @@ public class AuthenticationService {
     String accessToken = jwtService.generateAccessToken(user);
     String refreshToken = jwtService.generateRefreshToken(user);
 
-    tokenRepository.save(RefreshToken.builder()
+    tokenRepository.save(ActiveToken.builder()
         .token(refreshToken)
         .user(user)
         .build());

@@ -50,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       }
       filterChain.doFilter(request, response);
     } catch (Exception e) {
-      sendErrorResponse(response,e.getMessage());
+      sendErrorResponse(response,"Invalid token");
     }
 
   }

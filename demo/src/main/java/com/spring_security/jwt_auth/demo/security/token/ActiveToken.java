@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class RefreshToken {
+public class ActiveToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

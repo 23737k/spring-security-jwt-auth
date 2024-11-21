@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -78,6 +79,11 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(AccountNotVerifiedException.class)
   public ResponseEntity<?>  handleException(AccountNotVerifiedException e){
     return new ResponseEntity<>(e.getMessage(),HttpStatus.FORBIDDEN);
+  }
+
+  @ExceptionHandler(DisabledException.class)
+  public ResponseEntity<?> handleException(DisabledException e){
+    return new ResponseEntity<>("User account is not activated",HttpStatus.UNAUTHORIZED);
   }
 
 }
